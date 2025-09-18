@@ -1,0 +1,18 @@
+user_not_found: "User not found. Try again /start"
+help: "You are already registered. For more information, press /help"
+language_set: "✅ Language set: English"
+errors:
+  not_registered: "❌ You are not registered. Please press /start first."
+  internal_server_error: "Something went wrong. Pleas try again"
+ask_username: "✏️ Please enter your username:"
+menu:
+  setting: "Settings"
+  indebtedness: "Indebtedness"
+  balans: "Balans"
+  reports: "Reports"
+  add_new_operation: "Add new operation"
+stop:
+  confirm: "❗ All your data will be deleted. Do you want to continue?"
+  yes: "✅ Yes, delete"
+  no: "❌ No, cancel"
+  user_deleted: "✅ Your data has been successfully deleted. Thank you for using our bot!"

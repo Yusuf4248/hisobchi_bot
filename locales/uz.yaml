@@ -1,0 +1,18 @@
+user_not_found: "Foydalanuvchi topilmadi. Qayta urinib ko'ring /start"
+help: "Siz allaqachon ro'yhatdan o'tgansiz. Qo'shimcha ma'lumot uchun /help ni bosing"
+language_set: "✅ Til o'rnatildi: O'zbekcha"
+errors:
+  not_registered: "❌ Siz ro'yxatdan o'tmagansiz. Avval /start bosing."
+  user_not_found: "Nimadir xato ketdi. Iltimos, qaytadan urinib ko'ring"
+ask_username: "✏️ Iltimos, ismingizni kiriting:"
+menu:
+  setting: "Sozlamalar"
+  indebtedness: "Qarzdorlik"
+  balans: "Balans"
+  reports: "Hisobotlar"
+  add_new_operation: "Yangi operatsiya qo'shish"
+stop:
+  confirm: "❗ Sizning barcha ma'lumotlaringiz o'chiriladi. Davom etishni xohlaysizmi?"
+  yes: "✅ Ha, o'chirish"
+  no: "❌ Yo'q, bekor qilish"
+  user_deleted: "✅ Sizning barcha ma'lumotlaringiz muvaffaqiyatli o'chirildi. Bizning botdan foydalanganingiz uchun rahmat!"
