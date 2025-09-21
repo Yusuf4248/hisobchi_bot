@@ -6,14 +6,6 @@ import { BotModule } from "./bot/bot.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { BOT_NAME } from "./app.constants";
 import { UsersModule } from "./users/users.module";
-import {
-  AcceptLanguageResolver,
-  I18nModule,
-  QueryResolver,
-  I18nYamlLoader,
-  I18nService,
-  I18nJsonLoader, // yaml loader
-} from "nestjs-i18n";
 
 @Module({
   imports: [

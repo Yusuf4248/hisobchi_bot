@@ -3,7 +3,7 @@ import { Context } from "telegraf";
 import { UsersService } from "../users/users.service";
 import { i18n } from "./i18n.provider";
 import { Markup } from "telegraf";
-import { LanguageCodeEnum } from "../common/enums/enum";
+import { LanguageCodeEnum, UserStateEnum } from "../common/enums/enum";
 
 @Injectable()
 export class BotService {
@@ -16,9 +16,9 @@ export class BotService {
       );
     }
     const isUserExist = await this.userService.findOne(ctx.from.id);
-    if (isUserExist !== "user not found") {
-      const lang = isUserExist.language_code || "uz";
-      await ctx.reply(i18n.t(lang, "help"));
+    if (isUserExist) {
+      await ctx.replyWithHTML(i18n.t("uz", "help"));
+      return;
     }
     await this.userService.saveUserTelegramId(ctx.from.id);
     await ctx.reply(
@@ -35,69 +35,43 @@ export class BotService {
 
   async onLanguageChange(ctx: Context) {
     try {
-      // Extract language code
       const lang = (ctx as any).match[1] as LanguageCodeEnum;
 
-      // Find user
       const user = await this.userService.findOne(ctx.from!.id);
       if (!user) {
         await ctx.reply(i18n.t(lang, "errors.not_registered"));
         return;
       }
 
-      // Update language in DB
-      await this.userService.updateLanguage(ctx.from!.id, lang);
+      const shouldChangeState = !user.username;
+      await this.userService.updateUserLanguage(
+        ctx.from!.id,
+        lang,
+        shouldChangeState
+      );
 
-      // Close callback spinner
       await ctx.answerCbQuery();
+      const user1 = await this.userService.findOne(ctx.from!.id);
+      if (!user1) {
+        await ctx.reply(i18n.t(lang, "errors.not_registered"));
+        return;
+      }
 
-      // Translate success message
-      const successMessage = i18n.t(lang, "language_set") as string;
-
-      // Edit message with success text
-      await ctx.editMessageText(successMessage);
-      await ctx.reply(i18n.t(lang, "ask_username"));
+      await ctx.editMessageText(i18n.t(lang, "language_set"));
+      if (user1.state == UserStateEnum.USERNAME)
+        await ctx.reply(i18n.t(lang, "ask_username"));
     } catch (error) {
       await ctx.reply(i18n.t("uz", "errors.user_not_found"));
     }
   }
 
-  async onText(ctx: Context) {
-    if (!ctx.from) {
-      return await ctx.reply(i18n.t("uz", "internal_server_error"));
-    }
-    const user = await this.userService.findOne(ctx.from.id);
-    if (typeof user == "string") {
-      return await ctx.reply(i18n.t("uz", "user_not_found"));
-    }
-
-    if (user.state == "username" && ctx.message && "text" in ctx.message) {
-      await this.userService.updateUsername(ctx.from.id, ctx.message!.text);
-
-      return await ctx.replyWithHTML("✅ Ism muvaffaqiyatli saqlandi!", {
-        ...Markup.keyboard([
-          [i18n.t(user.language_code, "menu.add_new_operation")],
-          [
-            i18n.t(user.language_code, "menu.indebtedness"),
-            i18n.t(user.language_code, "menu.balans"),
-          ],
-          [
-            i18n.t(user.language_code, "menu.reports"),
-            i18n.t(user.language_code, "menu.setting"),
-          ],
-        ]).resize(),
-      });
-    }
-
-    await ctx.reply(i18n.t(user.language_code, "help"));
-  }
-
-  async onStop(ctx: Context) {
+  async onDeleteAccount(ctx: Context) {
     const user = await this.userService.findOne(ctx.from!.id);
-    if (user == "user not found") {
-      await ctx.reply(i18n.t("uz", "user_not_found"));
+    if (!user) {
+      await ctx.replyWithHTML(i18n.t("uz", "user_not_found"));
+      return;
     } else {
-      await ctx.reply(i18n.t(user.language_code, "stop.confirm"), {
+      await ctx.editMessageText(i18n.t(user.language_code, "stop.confirm"), {
         reply_markup: {
           inline_keyboard: [
             [
@@ -114,5 +88,116 @@ export class BotService {
         },
       });
     }
+  }
+
+  async onText(ctx: Context) {
+    if (!ctx.from) {
+      await ctx.reply(i18n.t("uz", "internal_server_error"));
+      return;
+    }
+
+    const user = await this.userService.findOne(ctx.from.id);
+    if (!user) {
+      await ctx.replyWithHTML(i18n.t("uz", "user_not_found"));
+      return;
+    }
+
+    if (!ctx.message || !("text" in ctx.message)) {
+      await ctx.reply(i18n.t(user.language_code, "help"));
+      return;
+    }
+
+    const text = ctx.message.text;
+
+    if (user.state === UserStateEnum.USERNAME) {
+      await this.userService.updateUsername(ctx.from.id, text);
+
+      await ctx.replyWithHTML(i18n.t(user.language_code, "username_saved"), {
+        ...Markup.keyboard([
+          [i18n.t(user.language_code, "menu.add_new_operation")],
+          [
+            i18n.t(user.language_code, "menu.indebtedness"),
+            i18n.t(user.language_code, "menu.balans"),
+          ],
+          [
+            i18n.t(user.language_code, "menu.reports"),
+            i18n.t(user.language_code, "menu.settings"),
+          ],
+        ]).resize(),
+      });
+      return;
+    }
+
+    if (text === i18n.t(user.language_code, "menu.settings")) {
+      await ctx.reply(i18n.t(user.language_code, "settings.choose_option"), {
+        ...Markup.inlineKeyboard([
+          [
+            Markup.button.callback(
+              i18n.t(user.language_code, "settings.change_name"),
+              "change_name"
+            ),
+            Markup.button.callback(
+              i18n.t(user.language_code, "settings.change_lang"),
+              "change_lang"
+            ),
+          ],
+          [
+            Markup.button.callback(
+              i18n.t(user.language_code, "settings.change_currency"),
+              "change_currency"
+            ),
+            Markup.button.callback(
+              i18n.t(user.language_code, "settings.delete_account"),
+              "delete_account"
+            ),
+          ],
+        ]),
+      });
+      return;
+    }
+
+    if (text === i18n.t(user.language_code, "menu.balans")) {
+      await ctx.reply(
+        i18n.t(user.language_code, "balance.choose_option"),
+        Markup.inlineKeyboard([
+          [
+            Markup.button.callback(
+              i18n.t(user.language_code, "balance.view"),
+              "bal_view"
+            ),
+            Markup.button.callback(
+              i18n.t(user.language_code, "balance.add_income"),
+              "bal_add"
+            ),
+          ],
+        ])
+      );
+
+      return;
+    }
+
+    if (user.state === UserStateEnum.ADD_BALANCE) {
+      if (isNaN(Number(text)) || Number(text) <= 0) {
+        await ctx.reply(i18n.t(user.language_code, "errors.invalid_balance"));
+        return;
+      }
+      const newBalance = user.balance + Number(text);
+      await this.userService.updateUserBalance(ctx.from.id, newBalance);
+
+      await ctx.reply(
+        `${i18n.t(user.language_code, "balance.add_success")}\n${i18n.t(user.language_code, "balance.title")}: ${newBalance}`
+      );
+
+      return;
+    }
+
+    if (user.state === UserStateEnum.ON_CHANGE_NAME) {
+      await this.userService.updateUsername(ctx.from.id, text);
+      await ctx.replyWithHTML(i18n.t(user.language_code, "username_saved"));
+      return;
+    }
+
+    await ctx.reply(i18n.t(user.language_code, "help"));
+    return;
   }
 }

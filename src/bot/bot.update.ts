@@ -16,9 +16,9 @@ export class BotUpdate {
     return this.botService.onLanguageChange(ctx);
   }
 
-  @Command("stop")
-  async onStop(@Ctx() ctx: Context) {
-    return this.botService.onStop(ctx);
+  @Action("delete_account")
+  async onDeleteAccount(@Ctx() ctx: Context) {
+    return this.botService.onDeleteAccount(ctx);
   }
 
   @On("text")

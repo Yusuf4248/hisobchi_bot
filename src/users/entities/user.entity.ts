@@ -3,48 +3,39 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { LanguageCodeEnum } from "../../common/enums/enum";
+import { LanguageCodeEnum, UserStateEnum } from "../../common/enums/enum";
 
 @Entity("user")
 export class User {
-  @ApiProperty({
-    example: 1,
-    description: "User's unique ID",
-  })
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({
-    example: 123456,
-    description: "User's telegram id",
-  })
   @Column({ type: "bigint", unique: true })
   telegram_id: number;
 
-  @ApiProperty({
-    example: "John",
-    description: "User's username",
-  })
-  @Column({ type: "varchar", nullable: true })
+  @Column({ type: "varchar", default: "" })
   username: string;
 
-  @ApiProperty({
-    example: LanguageCodeEnum.UZ,
-    description: "Language code: uz, ru or en",
-    enum: LanguageCodeEnum,
-  })
   @Column({
     type: "enum",
     enum: LanguageCodeEnum,
-    default: LanguageCodeEnum.UZ,
+    nullable: true,
   })
   language_code: LanguageCodeEnum;
 
-  @Column({ type: "varchar", default: "lang" })
-  state: string;
+  @Column({
+    type: "enum",
+    enum: UserStateEnum,
+    default: UserStateEnum.LANGUAGE,
+  })
+  state: UserStateEnum;
+
+  @Column({ default: 0 })
+  balance: number;
 
   @CreateDateColumn()
   created_at: Date;
