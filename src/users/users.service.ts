@@ -30,7 +30,6 @@ export class UsersService {
     lang: LanguageCodeEnum,
     changeState = false
   ) {
-    console.log(changeState);
     const user = await this.findOne(id);
 
     const updateData: Partial<User> = {
@@ -38,7 +37,7 @@ export class UsersService {
     };
 
     if (changeState) {
-      updateData.state = UserStateEnum.USERNAME;
+      updateData.main_state = UserStateEnum.USERNAME;
     }
 
     await this.userRepo.update({ telegram_id: id }, updateData);
@@ -47,14 +46,14 @@ export class UsersService {
   async updateUsername(id: number, username: string) {
     await this.userRepo.update(
       { telegram_id: id },
-      { username, state: UserStateEnum.END }
+      { username, main_state: UserStateEnum.END }
     );
   }
 
   async updateUserBalance(telegram_id: number, amount: number) {
     await this.userRepo.update(
       { telegram_id },
-      { balance: amount, state: UserStateEnum.END }
+      { balance: amount, main_state: UserStateEnum.END }
     );
   }
 
@@ -91,7 +90,7 @@ export class UsersService {
       }
       await this.userRepo.update(
         { telegram_id: ctx.from.id },
-        { state: UserStateEnum.ON_CHANGE_NAME }
+        { main_state: UserStateEnum.ON_CHANGE_NAME }
       );
 
       await ctx.editMessageText(i18n.t(user.language_code, "ask_username"));
@@ -162,7 +161,7 @@ export class UsersService {
     }
     await this.userRepo.update(
       { telegram_id: ctx.from.id },
-      { state: UserStateEnum.ADD_BALANCE }
+      { main_state: UserStateEnum.ADD_BALANCE }
     );
     await ctx.editMessageText(
       i18n.t(user.language_code, "balance.add_income"),
@@ -196,7 +195,7 @@ export class UsersService {
 
     await this.userRepo.update(
       { telegram_id: ctx.from.id },
-      { state: UserStateEnum.END }
+      { main_state: UserStateEnum.END }
     );
 
     await ctx.editMessageText(

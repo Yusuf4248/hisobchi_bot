@@ -33,3 +33,32 @@ balance:
   view: "🔎 Balansni ko'rish"
   add_income: "➕ Daromad qo'shish"
   add_success: "✅ Operatsiya muvaffaqiyatli qo'shildi."
+indebtedness:
+  choose_option: " Qarzdorlik bo'limidan birini tanlang:"
+  my_debtors: "👤 Mendan qarz olganlar"
+  i_owe: "👤 Mening qarzlarim"
+  my_debts:
+    title: "📌 Meni qarzlarim bo'limi. Kerakli amalni tanlang:"
+    add: "➕ Yangi qarz qo'shish"
+    list: "📋 Qarzlar ro'yxati"
+    pay: "💰 To'lov qilish"
+    report: "📊 Hisobot"
+  given_debts:
+    title: "📌 Men bergan qarzlar bo'limi. Kerakli amalni tanlang:"
+    empty: "Siz hali qarz bermagansiz!"
+    list_title: "📋 Siz bergan qarzlaringiz:"
+    add: "➕ Yangi qarz qo'shish"
+    add_debt:
+      enter_debtor: "Iltimos, qarzdor bo'lgan odamning ismini kiriting:"
+      enter_amount: "Qancha summa qarz berdi? Summani kiriting (masalan: 250000):"
+      invalid_amount: "❌ Noto'g'ri format! Summani faqat raqamlarda kiriting."
+      enter_description: "Qarz haqida qisqa izoh yozing (masalan: Telefon xaridi uchun):"
+      confirm: "✅ Ma’lumotlar to'g'rimi?\n👤 Qarzdor: {debtor}\n💰 Summa: {amount}\n📝 Izoh: {description}"
+      confirm_buttons:
+        yes: "✅ Ha, saqlash"
+        no: "❌ Yo'q, bekor qilish"
+      success: "🎉 Qarz muvaffaqiyatli qo'shildi!"
+      cancelled: "❌ Qarz qo'shish bekor qilindi."
+    list: "📋 Qarzlar ro'yxati"
+    close: "✅ Qarz yopildi"
+    report: "📊 Hisobot"

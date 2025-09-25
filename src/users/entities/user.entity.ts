@@ -3,11 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { LanguageCodeEnum, UserStateEnum } from "../../common/enums/enum";
+import { DebtsTaken } from "../../debts-taken/entities/debts-taken.entity";
 
 @Entity("user")
 export class User {
@@ -32,7 +34,10 @@ export class User {
     enum: UserStateEnum,
     default: UserStateEnum.LANGUAGE,
   })
-  state: UserStateEnum;
+  main_state: UserStateEnum;
+
+  @Column({ type: "integer", nullable: true })
+  current_step: number | null;
 
   @Column({ default: 0 })
   balance: number;
@@ -42,4 +47,11 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  // Relations
+  @OneToMany(() => DebtsTaken, (debts_taken) => debts_taken.user, {
+    onDelete: "CASCADE",
+    nullable: true,
+  })
+  debts_taken: DebtsTaken[];
 }

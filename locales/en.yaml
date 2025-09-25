@@ -33,3 +33,21 @@ balance:
   view: "🔎 View balance"
   add_income: "➕ Add income"
   add_success: "✅ Operation successfully added."
+indebtedness:
+  choose_option: "Choose one of the debt options:"
+  my_debtors: "👤 People who owe me"
+  i_owe: "👤 My debts"
+  my_debts:
+    title: "📌 My Debts. Choose an action:"
+    add: "➕ Add New Debt"
+    list: "📋 Debt List"
+    pay: "💰 Make a Payment"
+    report: "📊 Report"
+  given_debts:
+    title: "📌 Debts I Gave. Choose an action:"
+    empty: "You haven’t given any debts yet!"
+    list_title: "📋 Your given debts:"
+    add: "➕ Add New Debt"
+    list: "📋 Debt List"
+    close: "✅ Mark as Paid"
+    report: "📊 Report"

@@ -15,9 +15,21 @@ export class BotService {
         "Kutilmagan xatolik yuz berdi. Iltimos qayta urinib koring"
       );
     }
-    const isUserExist = await this.userService.findOne(ctx.from.id);
-    if (isUserExist) {
-      await ctx.replyWithHTML(i18n.t("uz", "help"));
+    const user = await this.userService.findOne(ctx.from.id);
+    if (user) {
+      await ctx.replyWithHTML(i18n.t("uz", "help"), {
+        ...Markup.keyboard([
+          [i18n.t(user.language_code, "menu.add_new_operation")],
+          [
+            i18n.t(user.language_code, "menu.indebtedness"),
+            i18n.t(user.language_code, "menu.balans"),
+          ],
+          [
+            i18n.t(user.language_code, "menu.reports"),
+            i18n.t(user.language_code, "menu.settings"),
+          ],
+        ]).resize(),
+      });
       return;
     }
     await this.userService.saveUserTelegramId(ctx.from.id);
@@ -57,9 +69,23 @@ export class BotService {
         return;
       }
 
-      await ctx.editMessageText(i18n.t(lang, "language_set"));
-      if (user1.state == UserStateEnum.USERNAME)
+      if (user1.main_state == UserStateEnum.USERNAME) {
+        await ctx.editMessageText(i18n.t(lang, "language_set"));
         await ctx.reply(i18n.t(lang, "ask_username"));
+      } else {
+        if (ctx.callbackQuery?.message?.message_id) {
+          await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
+        }
+
+        await ctx.reply(
+          i18n.t(lang, "language_set"),
+          Markup.keyboard([
+            [i18n.t(lang, "menu.add_new_operation")],
+            [i18n.t(lang, "menu.indebtedness"), i18n.t(lang, "menu.balans")],
+            [i18n.t(lang, "menu.reports"), i18n.t(lang, "menu.settings")],
+          ]).resize()
+        );
+      }
     } catch (error) {
       await ctx.reply(i18n.t("uz", "errors.user_not_found"));
     }
@@ -102,6 +128,20 @@ export class BotService {
       return;
     }
 
+    if (user.main_state === UserStateEnum.LANGUAGE) {
+      await ctx.reply(
+        `❗ Botdan foydalanish uchun avval tilni tanlashingiz kerak.\n❗ Чтобы пользоваться ботом, сначала выберите язык.\n❗ To use the bot, please choose a language first. `,
+        Markup.inlineKeyboard([
+          [
+            Markup.button.callback(" 🇺🇿 ", "lang:uz"),
+            Markup.button.callback(" 🇷🇺 ", "lang:ru"),
+            Markup.button.callback(" 🇬🇧 ", "lang:en"),
+          ],
+        ])
+      );
+      return;
+    }
+
     if (!ctx.message || !("text" in ctx.message)) {
       await ctx.reply(i18n.t(user.language_code, "help"));
       return;
@@ -109,7 +149,7 @@ export class BotService {
 
     const text = ctx.message.text;
 
-    if (user.state === UserStateEnum.USERNAME) {
+    if (user.main_state === UserStateEnum.USERNAME) {
       await this.userService.updateUsername(ctx.from.id, text);
 
       await ctx.replyWithHTML(i18n.t(user.language_code, "username_saved"), {
@@ -176,7 +216,29 @@ export class BotService {
       return;
     }
 
-    if (user.state === UserStateEnum.ADD_BALANCE) {
+    if (text == i18n.t(user.language_code, "menu.indebtedness")) {
+      await ctx.reply(
+        i18n.t(user.language_code, "indebtedness.choose_option"),
+        {
+          ...Markup.inlineKeyboard([
+            [
+              Markup.button.callback(
+                i18n.t(user.language_code, "indebtedness.i_owe"),
+                "debt:i_owe"
+              ),
+              Markup.button.callback(
+                i18n.t(user.language_code, "indebtedness.my_debtors"),
+                "debt:my_debtors"
+              ),
+            ],
+          ]),
+        }
+      );
+
+      return;
+    }
+
+    if (user.main_state === UserStateEnum.ADD_BALANCE) {
       if (isNaN(Number(text)) || Number(text) <= 0) {
         await ctx.reply(i18n.t(user.language_code, "errors.invalid_balance"));
         return;
@@ -185,19 +247,41 @@ export class BotService {
       await this.userService.updateUserBalance(ctx.from.id, newBalance);
 
       await ctx.reply(
-        `${i18n.t(user.language_code, "balance.add_success")}\n${i18n.t(user.language_code, "balance.title")}: ${newBalance}`
+        `${i18n.t(user.language_code, "balance.add_success")}\n${i18n.t(user.language_code, "balance.title")}: ${newBalance}`,
+        {
+          ...Markup.inlineKeyboard([
+            [
+              Markup.button.callback(
+                i18n.t(user.language_code, "menu.back"),
+                "bal_go_back"
+              ),
+            ],
+          ]),
+        }
       );
 
       return;
     }
 
-    if (user.state === UserStateEnum.ON_CHANGE_NAME) {
+    if (user.main_state === UserStateEnum.ON_CHANGE_NAME) {
       await this.userService.updateUsername(ctx.from.id, text);
       await ctx.replyWithHTML(i18n.t(user.language_code, "username_saved"));
       return;
     }
 
-    await ctx.reply(i18n.t(user.language_code, "help"));
+    await ctx.reply(i18n.t(user.language_code, "help"), {
+      ...Markup.keyboard([
+        [i18n.t(user.language_code, "menu.add_new_operation")],
+        [
+          i18n.t(user.language_code, "menu.indebtedness"),
+          i18n.t(user.language_code, "menu.balans"),
+        ],
+        [
+          i18n.t(user.language_code, "menu.reports"),
+          i18n.t(user.language_code, "menu.settings"),
+        ],
+      ]).resize(),
+    });
     return;
   }
 }
