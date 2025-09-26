@@ -17,8 +17,12 @@ export class UsersService {
       where: {
         telegram_id: id,
       },
-      relations: [],
+      relations: ["debts_taken"],
     });
+  }
+
+  async delete(id: number) {
+    await this.userRepo.delete({ telegram_id: id });
   }
 
   async saveUserTelegramId(id: number) {
@@ -57,64 +61,70 @@ export class UsersService {
     );
   }
 
-  async onConfirmStop(ctx: Context) {
+  async updateUserState(id: number, state: UserStateEnum) {
+    await this.userRepo.update({ telegram_id: id }, { main_state: state });
+  }
+
+  async updateUserStep(id: number, action: "NEXT" | "PREV" | "RESET") {
     const user = await this.userRepo.findOne({
-      where: { telegram_id: ctx.from!.id },
+      where: { telegram_id: id },
+      select: ["id", "current_step"],
     });
+
+    if (!user) return;
+
+    let newStep: number | null = user.current_step ?? 0;
+
+    switch (action) {
+      case "NEXT":
+        newStep = (user.current_step ?? 0) + 1;
+        break;
+      case "PREV":
+        newStep =
+          user.current_step && user.current_step > 0
+            ? user.current_step - 1
+            : 0;
+        break;
+      case "RESET":
+        newStep = null;
+        break;
+    }
+
+    await this.userRepo.update({ telegram_id: id }, { current_step: newStep });
+  }
+
+  async onBalance(ctx: Context) {
+    if (!ctx.from) {
+      await ctx.reply(i18n.t("uz", "internal_server_error"));
+      return;
+    }
+
+    const user = await this.findOne(ctx.from.id);
     if (!user) {
-      return await ctx.editMessageText("❌ User not found");
+      await ctx.replyWithHTML(i18n.t("uz", "user_not_found"));
+      return;
     }
-    const lang = user.language_code;
-    await this.userRepo.delete({ telegram_id: ctx.from!.id });
+    await ctx.editMessageText(
+      i18n.t(user.language_code, "balance.choose_option"),
+      Markup.inlineKeyboard([
+        [
+          Markup.button.callback(
+            i18n.t(user.language_code, "balance.view"),
+            "bal_view"
+          ),
+          Markup.button.callback(
+            i18n.t(user.language_code, "balance.add_income"),
+            "bal_add"
+          ),
+          Markup.button.callback(
+            i18n.t(user.language_code, "menu.back"),
+            "back_main_menu"
+          ),
+        ],
+      ])
+    );
 
-    await ctx.editMessageText(i18n.t(lang, "stop.user_deleted"));
-  }
-
-  async onCancelStop(ctx: Context) {
-    const user = await this.userRepo.findOne({
-      where: { telegram_id: ctx.from!.id },
-    });
-    const lang = user!.language_code;
-
-    await ctx.editMessageText(i18n.t(lang, "stop.cancelled"), {
-      parse_mode: "HTML",
-    });
-  }
-
-  async onChangeName(ctx: Context) {
-    if (ctx.from) {
-      const user = await this.findOne(ctx.from.id);
-      if (!user) {
-        await ctx.replyWithHTML(i18n.t("uz", "user_not_found"));
-        return;
-      }
-      await this.userRepo.update(
-        { telegram_id: ctx.from.id },
-        { main_state: UserStateEnum.ON_CHANGE_NAME }
-      );
-
-      await ctx.editMessageText(i18n.t(user.language_code, "ask_username"));
-    }
-  }
-
-  async onChangeLang(ctx: Context) {
-    if (ctx.from) {
-      const user = await this.findOne(ctx.from.id);
-      if (!user) {
-        await ctx.replyWithHTML(i18n.t("uz", "user_not_found"));
-        return;
-      }
-      await ctx.editMessageText(
-        i18n.t(user.language_code, "choose_lang"),
-        Markup.inlineKeyboard([
-          [
-            Markup.button.callback("🇺🇿", "lang:uz"),
-            Markup.button.callback("🇷🇺", "lang:ru"),
-            Markup.button.callback("🇬🇧", "lang:en"),
-          ],
-        ])
-      );
-    }
+    return;
   }
 
   async onViewBalance(ctx: Context) {
@@ -209,6 +219,10 @@ export class UsersService {
           Markup.button.callback(
             i18n.t(user.language_code, "balance.add_income"),
             "bal_add"
+          ),
+          Markup.button.callback(
+            i18n.t(user.language_code, "menu.back"),
+            "back_main_menu"
           ),
         ],
       ])

@@ -4,6 +4,7 @@ language_set: "✅ Language set: English"
 choose_lang: "Please select the language you need"
 ask_username: "✏️ Please enter your username:"
 username_saved: "✅ Name has been successfully saved!"
+cancel: "❌ Cancel"
 errors:
   not_registered: "❌ You are not registered. Please press /start first."
   internal_server_error: "Something went wrong. Pleas try again"
@@ -15,6 +16,7 @@ stop:
   user_deleted: "✅ Your data has been successfully deleted. Thank you for using our bot!"
   cancelled: "✅ Action cancelled. Your account will not be deleted."
 menu:
+  title: "📋 Please choose one of the main menu options:"
   settings: "Settings"
   indebtedness: "Indebtedness"
   balans: "Balans"
@@ -39,10 +41,29 @@ indebtedness:
   i_owe: "👤 My debts"
   my_debts:
     title: "📌 My Debts. Choose an action:"
+    empty: "You haven't borrowed money from anyone yet!"
+    list_title: "📋 Your taken debts:"
     add: "➕ Add New Debt"
     list: "📋 Debt List"
     pay: "💰 Make a Payment"
     report: "📊 Report"
+    debt_add:
+      step1: "👤 Enter the debtor's name or send their contact."
+      step2: "💵 Choose the currency:"
+      step3: "💰 Enter the debt amount (numbers only)."
+      step4: "📅 Enter the date the debt was given"
+      step5: "⏳ Enter the repayment date"
+      step6: "📝 Would you like to leave a note about the debt?\n(e.g., for buying a phone)"
+      step7: "✅ Confirm the details:"
+      confirm_template: |
+        👤 Debtor: {name}
+        💰 Amount: {amount} {currency}
+        📅 Date: {date}
+        ⏳ Due date: {due_date}
+        📝 Note: {note}
+      step8:
+        success: "✅ Debt successfully added!"
+        cancel: "❌ Debt adding was cancelled."
   given_debts:
     title: "📌 Debts I Gave. Choose an action:"
     empty: "You haven’t given any debts yet!"

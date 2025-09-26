@@ -39,6 +39,9 @@ export class DebtsTaken {
   updated_at: Date;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.debts_taken)
+  @ManyToOne(() => User, (user) => user.debts_taken, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   user: User;
 }

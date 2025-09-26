@@ -2,13 +2,15 @@ user_not_found: "Foydalanuvchi topilmadi. Qayta urinib ko'ring /start"
 help: "Siz allaqachon ro'yhatdan o'tgansiz. Qo'shimcha ma'lumot uchun /help ni bosing"
 language_set: "✅ Til o'rnatildi: O'zbekcha"
 choose_lang: "Iltimos, kerakli tilni tanlang"
+ask_username: "✏️ Iltimos, ismingizni kiriting:"
+username_saved: "✅ Ism muvaffaqiyatli saqlandi!"
+cancel: "❌ Bekor qilish"
 errors:
   not_registered: "❌ Siz ro'yxatdan o'tmagansiz. Avval /start bosing."
   user_not_found: "Nimadir xato ketdi. Iltimos, qaytadan urinib ko'ring"
   invalid_balance: "❌ Iltimos, balansni to'ldirish uchun faqat raqam kiriting."
-ask_username: "✏️ Iltimos, ismingizni kiriting:"
-username_saved: "✅ Ism muvaffaqiyatli saqlandi!"
 menu:
+  title: "📋 Asosiy menyudan birini tanlang:"
   settings: "Sozlamalar"
   indebtedness: "Qarzdorlik"
   balans: "Balans"
@@ -39,10 +41,29 @@ indebtedness:
   i_owe: "👤 Mening qarzlarim"
   my_debts:
     title: "📌 Meni qarzlarim bo'limi. Kerakli amalni tanlang:"
+    empty: "Siz hali hech kimdan qarz olmadingiz!"
+    list_title: "📋 Siz olgan qarzlaringiz:"
     add: "➕ Yangi qarz qo'shish"
     list: "📋 Qarzlar ro'yxati"
     pay: "💰 To'lov qilish"
     report: "📊 Hisobot"
+    debt_add:
+      step1: "👤 Qarz olgan odamning ismini kiriting yoki kontaktini yuboring."
+      step2: "💵 Valyutani tanlang:"
+      step3: "💰 Qarz summasini kiriting (faqat son yozing)."
+      step4: "📅 Qarz berilgan sanani kiriting"
+      step5: "⏳ Qarz qaytarilishi kerak bo'lgan muddatni kiriting"
+      step6: "📝 Qarz haqida izoh qoldirmoqchimisiz?\n(Masalan: telefon olish uchun)"
+      step7: "✅ Ma’lumotlarni tasdiqlang:"
+      confirm_template: |
+        👤 Qarz oluvchi: {name}
+        💰 Summasi: {amount} {currency}
+        📅 Sana: {date}
+        ⏳ Muddat: {due_date}
+        📝 Izoh: {note}
+      step8:
+        success: "✅ Qarz muvaffaqiyatli qo'shildi!"
+        cancel: "❌ Qarz qo'shish bekor qilindi."
   given_debts:
     title: "📌 Men bergan qarzlar bo'limi. Kerakli amalni tanlang:"
     empty: "Siz hali qarz bermagansiz!"

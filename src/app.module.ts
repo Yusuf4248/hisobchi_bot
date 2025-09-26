@@ -7,6 +7,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { BOT_NAME } from "./app.constants";
 import { UsersModule } from "./users/users.module";
 import { DebtsTakenModule } from "./debts-taken/debts-taken.module";
+import { SettingsModule } from './settings/settings.module';
+import { IndebtednessModule } from './indebtedness/indebtedness.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { DebtsTakenModule } from "./debts-taken/debts-taken.module";
     BotModule,
     UsersModule,
     DebtsTakenModule,
+    SettingsModule,
+    IndebtednessModule,
   ],
 })
 export class AppModule {}

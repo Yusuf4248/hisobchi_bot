@@ -6,24 +6,9 @@ import { Context } from "telegraf";
 export class UsersUpdate {
   constructor(private readonly usersService: UsersService) {}
 
-  @Action("confirm_stop")
-  async onConfirmStop(@Ctx() ctx: Context) {
-    return this.usersService.onConfirmStop(ctx);
-  }
-
-  @Action("cancel_stop")
-  async onCancelStop(@Ctx() ctx: Context) {
-    return this.usersService.onCancelStop(ctx);
-  }
-
-  @Action("change_name")
-  async onChangeName(@Ctx() ctx: Context) {
-    return this.usersService.onChangeName(ctx);
-  }
-
-  @Action("change_lang")
-  async onChangeLang(@Ctx() ctx: Context) {
-    return this.usersService.onChangeLang(ctx);
+  @Action("balance")
+  async onBalance(@Ctx() ctx: Context) {
+    return this.usersService.onBalance(ctx);
   }
 
   @Action("bal_view")

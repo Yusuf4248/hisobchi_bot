@@ -1,5 +1,5 @@
 import { BotService } from "./bot.service";
-import { Action, Command, Ctx, On, Start, Update } from "nestjs-telegraf";
+import { Action, Ctx, On, Start, Update } from "nestjs-telegraf";
 import { Context } from "telegraf";
 
 @Update()
@@ -11,14 +11,9 @@ export class BotUpdate {
     return this.botService.onStart(ctx);
   }
 
-  @Action(/lang:(.+)/)
-  async onBotLanguage(@Ctx() ctx: Context) {
-    return this.botService.onLanguageChange(ctx);
-  }
-
-  @Action("delete_account")
-  async onDeleteAccount(@Ctx() ctx: Context) {
-    return this.botService.onDeleteAccount(ctx);
+  @Action("back_main_menu")
+  async onBackMainMenu(@Ctx() ctx: Context) {
+    return this.botService.onBackToMainMenu(ctx);
   }
 
   @On("text")

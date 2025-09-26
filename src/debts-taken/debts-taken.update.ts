@@ -11,19 +11,19 @@ export class DebtsTakenUpdate {
     return this.debtsGivenService.onDebtIOwe(ctx);
   }
 
-  @Action("given_debt_add")
-  async onGivenDebtAdd(ctx: Context) {
-    return this.debtsGivenService.onGivenDebtAdd(ctx);
+  @Action("taken_debt_add")
+  async onTakenDebtAdd(ctx: Context) {
+    return this.debtsGivenService.onTakenDebtAdd(ctx);
   }
 
-  @Action("given_debt_list")
-  async onGivenDebtList(ctx: Context) {
-    return this.debtsGivenService.onGivenDebtList(ctx);
+  @Action("taken_debt_list")
+  async onTakenDebtList(ctx: Context) {
+    return this.debtsGivenService.onTakenDebtList(ctx);
   }
 
-  @Action("given_debt_close")
-  async onGivenDebtClose(ctx: Context) {
-    await ctx.reply("Qarz yopish uchun amal...");
+  @Action("taken_debt_close")
+  async onTakenDebtClose(ctx: Context) {
+    return this.debtsGivenService.onTakenDebtClose(ctx);
   }
 
   @Action("indebtedness_menu")
@@ -31,7 +31,8 @@ export class DebtsTakenUpdate {
     return this.debtsGivenService.onBackToIndebtnessMenu(ctx);
   }
 
-  @Action("given_debt_back")
+  // @Action(/^taken_debt_back_(\d+)$/)
+  @Action("taken_debt_back")
   async onBackToMyDebtsMenu(@Ctx() ctx: Context) {
     return this.debtsGivenService.onDebtIOwe(ctx);
   }
